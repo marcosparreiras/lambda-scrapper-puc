@@ -1,17 +1,18 @@
-import { z } from 'zod';
-import { SQSEvent, type Context } from 'aws-lambda';
-import { AxiosHTTPGateway } from './http-gateway/axios-http-gatway';
-import type { HTTPGetaway } from './http-gateway/http-gateway';
-import { CheerioNFEParser } from './nfe-parser/cheerio-nfe-parser';
-import type { NFEParser } from './nfe-parser/nfe-parser';
-import type { MessagePublisher } from './message/message-publisher';
-import { SNSMessagePublisher } from './message/sns-message-publisher';
+import { z, ZodError } from 'zod';
 import { env } from './env';
+import { SQSEvent, type Context } from 'aws-lambda';
+import type { HTTPGetaway } from './application/bondaires/http-gateway';
+import { CheerioNFEParser } from './adapters/cheerio-nfe-parser';
+import type { NFEParser } from './application/bondaires/nfe-parser';
+import type { MessagePublisher } from './application/bondaires/message-publisher';
+import { ExtractAndPublishNFEDataUseCase } from './application/use-cases/extract-and-publish-nfe-data-use-case';
+import { AxiosHTTPGateway } from './adapters/axios-http-gatway';
+import { SNSMessagePublisher } from './adapters/sns-message-publisher';
+import { AppException } from './exceptions/app-exception';
 
-export async function lambdaHandler(event: SQSEvent, context?: Context): Promise<void> {
+export async function lambdaHandler(event: SQSEvent, _context?: Context): Promise<void> {
     const eventRecordsBodySchema = z.array(
         z.object({
-            messageId: z.string(),
             body: z.object({
                 url: z.string().url(),
             }),
@@ -20,20 +21,36 @@ export async function lambdaHandler(event: SQSEvent, context?: Context): Promise
     try {
         const records = eventRecordsBodySchema.parse(
             event.Records.map((record) => ({
-                messageId: record.messageId,
                 body: JSON.parse(record.body),
             })),
         );
+
         const httpGetaway: HTTPGetaway = new AxiosHTTPGateway();
         const messagePublisher: MessagePublisher = new SNSMessagePublisher();
+        const nfeParser: NFEParser = new CheerioNFEParser();
+        const extractAndPublishNFEDataUseCase = new ExtractAndPublishNFEDataUseCase(
+            httpGetaway,
+            messagePublisher,
+            nfeParser,
+        );
+
         for (let record of records) {
-            const httpReponse = await httpGetaway.get(record.body.url);
-            const nfeParser: NFEParser = new CheerioNFEParser(httpReponse.body as string);
-            const data = nfeParser.getData();
-            await messagePublisher.send(env.AWS_PUBLISH_DATA_TOPIC_ARN, JSON.stringify(data));
+            await extractAndPublishNFEDataUseCase.execute({
+                url: record.body.url,
+                channel: env.AWS_PUBLISH_DATA_TOPIC_ARN,
+            });
         }
+
         return;
     } catch (error: unknown) {
+        if (error instanceof ZodError) {
+            console.log(error.format());
+            return;
+        }
+        if (error instanceof AppException) {
+            console.log(error.message);
+            return;
+        }
         console.log(error);
         return;
     }
