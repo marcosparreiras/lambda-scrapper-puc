@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  NFScrapper
+
+  Lambda function to do web scrapper on NFE
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+
+Resources:
+  NFPublishedSNS:
+    Type: AWS::SNS::Topic
+    Properties:
+      FifoTopic: true
+      TopicName: "NFPublishedSNS.fifo"
+
+  NFScrapperSQS:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: "NFScrapperSQS.fifo"
+      FifoQueue: true
+
+  Subscription:
+    Type: "AWS::SNS::Subscription"
+    Properties:
+      TopicArn: !Ref NFPublishedSNS
+      Endpoint: !GetAtt NFScrapperSQS.Arn
+      Protocol: sqs
+      RawMessageDelivery: true
+
+  NFScrapperSQSQueuePolicy:
+    Type: "AWS::SQS::QueuePolicy"
+    Properties:
+      Queues:
+        - !Ref NFScrapperSQS
+      PolicyDocument:
+        Statement:
+          - Effect: "Allow"
+            Principal: "*"
+            Action:
+              - sqs:SendMessage
+            Resource:
+              - !GetAtt NFScrapperSQS.Arn
+            Condition:
+              ArnEquals:
+                "aws:SourceArn": !Ref NFPublishedSNS
+
+  NFScrapperFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: scrapper/
+      Handler: app.lambdaHandler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+
+      Events:
+        SqsEvento:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt NFScrapperSQS.Arn
