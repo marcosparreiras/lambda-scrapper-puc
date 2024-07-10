@@ -1,3 +1,4 @@
+import { HttpResponseException } from '../../exceptions/http-response-exception';
 import type { HTTPGetaway } from '../bondaires/http-gateway';
 import type { MessagePublisher } from '../bondaires/message-publisher';
 import type { NFEParser } from '../bondaires/nfe-parser';
@@ -16,6 +17,9 @@ export class ExtractAndPublishNFEDataUseCase {
 
     public async execute({ url, channel }: Input): Promise<void> {
         const httpReponse = await this.httpGetaway.get(url);
+        if (httpReponse.status !== 200) {
+            throw new HttpResponseException(url);
+        }
         this.nfeParser.load(httpReponse.body as string);
         const data = this.nfeParser.getData();
         const message = JSON.stringify(data);
