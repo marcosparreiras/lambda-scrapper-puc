@@ -69,3 +69,8 @@ Resources:
         Sourcemap: true
         EntryPoints:
           - app.ts
+
+Outputs:
+  NFPublishedSNS:
+    Description: "NFPublishedSNS Function ARN"
+    Value: !GetAtt NFPublishedSNS.Arn
