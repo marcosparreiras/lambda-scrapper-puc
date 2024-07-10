@@ -1,8 +1,6 @@
 export interface NFEItem {
     name: string;
     code: string;
-    qty: number;
-    unit: string;
     price: number;
 }
 

@@ -109,8 +109,7 @@ export class CheerioNFEParser implements NFEParser {
             nameMatch: columns[0].match(/^(.*?)\s*\(Código: \d+\)$/),
             codeMatch: columns[0].match(/Código: (\d+)/),
             qtyMatch: columns[1].match(/Qtde total de ítens: (\d+\.\d+)/),
-            unitMatch: columns[2].match(/UN: (.*)/),
-            priceMatch: columns[3].match(/\b\d*,\d*\b/),
+            totoalPriceMatch: columns[3].match(/\b\d*,\d*\b/),
         };
 
         for (let key in match) {
@@ -122,9 +121,9 @@ export class CheerioNFEParser implements NFEParser {
         return {
             name: (match.nameMatch as RegExpMatchArray)[1],
             code: (match.codeMatch as RegExpExecArray)[1],
-            qty: parseFloat((match.qtyMatch as RegExpExecArray)[1]),
-            unit: (match.unitMatch as RegExpExecArray)[1].trim(),
-            price: parseFloat((match.priceMatch as RegExpExecArray)[0].split(',').join('.')),
+            price:
+                parseFloat((match.totoalPriceMatch as RegExpExecArray)[0].split(',').join('.')) /
+                parseFloat((match.qtyMatch as RegExpExecArray)[1]),
         };
     }
 }
