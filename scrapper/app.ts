@@ -1,10 +1,10 @@
 import { z, ZodError } from 'zod';
 import { env } from './env';
 import { SQSEvent, type Context } from 'aws-lambda';
-import type { HTTPGetaway } from './application/bondaires/http-gateway';
+import type { HTTPGetaway } from './application/bondaries/http-gateway';
 import { CheerioNFEParser } from './adapters/cheerio-nfe-parser';
-import type { NFEParser } from './application/bondaires/nfe-parser';
-import type { MessagePublisher } from './application/bondaires/message-publisher';
+import type { NFEParser } from './application/bondaries/nfe-parser';
+import type { MessagePublisher } from './application/bondaries/message-publisher';
 import { ExtractAndPublishNFEDataUseCase } from './application/use-cases/extract-and-publish-nfe-data-use-case';
 import { AxiosHTTPGateway } from './adapters/axios-http-gatway';
 import { SNSMessagePublisher } from './adapters/sns-message-publisher';

@@ -16,7 +16,8 @@ describe('Cheeiro-nfe-parser', () => {
 
         expect(output).toEqual(
             expect.objectContaining({
-                supermarket: 'COMERCIAL DAHANA LIMITADA SN 422',
+                id: '31-24/06-00.070.509/0030-45-65-206-000.114.489-133.763.8029',
+                supermarketName: 'COMERCIAL DAHANA LIMITADA SN 422',
                 address: 'R GRAO MOGOL, 202, CARMO, 3106200 - BELO HORIZONTE, MG',
                 cnpj: '00.070.509/0030-45',
                 date: new Date('2024-06-07T12:26:37.000Z'),

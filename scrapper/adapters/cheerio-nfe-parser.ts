@@ -1,5 +1,5 @@
 import { load, type CheerioAPI, type Element } from 'cheerio';
-import type { NFEData, NFEItem, NFEParser } from '../application/bondaires/nfe-parser';
+import type { NFEData, NFEItem, NFEParser } from '../application/bondaries/nfe-parser';
 import { NFEExeception } from '../exceptions/nfe-parser-exception';
 import { NFEParserHTMLNotLoadedException } from '../exceptions/nfe-parser-html-not-loaded-exception';
 
@@ -16,12 +16,30 @@ export class CheerioNFEParser implements NFEParser {
 
     public getData(): NFEData {
         return {
-            supermarket: this.getSupermarketName(),
+            id: this.getId(),
+            supermarketName: this.getSupermarketName(),
             cnpj: this.getCNPJ(),
             address: this.getAddress(),
             date: this.getDate(),
             items: this.getItems(),
         };
+    }
+
+    private getId(): string {
+        if (this.html === null) {
+            throw new NFEParserHTMLNotLoadedException();
+        }
+        const element = this.html('tbody tr td');
+
+        const IdMatch = element
+            .text()
+            .match(
+                /\d{2}-\d{2}\/\d{2}-\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}-\d{2}-\d{3}-\d{3}\.\d{3}\.\d{3}-\d{3}\.\d{3}\.\d{4}/,
+            );
+        if (IdMatch === null) {
+            throw new NFEExeception();
+        }
+        return IdMatch[0];
     }
 
     private getSupermarketName(): string {

@@ -1,4 +1,4 @@
-import type { MessagePublisher } from '../application/bondaires/message-publisher';
+import type { MessagePublisher } from '../application/bondaries/message-publisher';
 
 export class MessagePublisherStub implements MessagePublisher {
     private lastMessage?: string;

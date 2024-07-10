@@ -1,4 +1,4 @@
-import type { HTTPGetaway, HttpResponse } from '../application/bondaires/http-gateway';
+import type { HTTPGetaway, HttpResponse } from '../application/bondaries/http-gateway';
 import axios, { type Axios } from 'axios';
 
 export class AxiosHTTPGateway implements HTTPGetaway {

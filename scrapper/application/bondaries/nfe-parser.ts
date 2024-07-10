@@ -7,9 +7,10 @@ export interface NFEItem {
 }
 
 export interface NFEData {
-    supermarket: string | null;
-    cnpj: string | null;
-    address: string | null;
+    id: string;
+    supermarketName: string;
+    cnpj: string;
+    address: string;
     date: Date;
     items: NFEItem[];
 }

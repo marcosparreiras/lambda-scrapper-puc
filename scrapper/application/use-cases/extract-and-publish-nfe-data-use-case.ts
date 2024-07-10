@@ -1,7 +1,7 @@
 import { HttpResponseException } from '../../exceptions/http-response-exception';
-import type { HTTPGetaway } from '../bondaires/http-gateway';
-import type { MessagePublisher } from '../bondaires/message-publisher';
-import type { NFEParser } from '../bondaires/nfe-parser';
+import type { HTTPGetaway } from '../bondaries/http-gateway';
+import type { MessagePublisher } from '../bondaries/message-publisher';
+import type { NFEParser } from '../bondaries/nfe-parser';
 
 type Input = {
     channel: string;

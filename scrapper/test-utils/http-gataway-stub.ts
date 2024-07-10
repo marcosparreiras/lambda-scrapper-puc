@@ -1,4 +1,4 @@
-import type { HTTPGetaway, HttpResponse } from '../application/bondaires/http-gateway';
+import type { HTTPGetaway, HttpResponse } from '../application/bondaries/http-gateway';
 
 export class HttpGetawayStub implements HTTPGetaway {
     async get(_url: string): Promise<HttpResponse> {
