@@ -9,22 +9,22 @@ Parameters:
   AWS_ACCESS_KEY_ID:
     Type: String
     Description: "AWS CONFIG"
-     Default: ""
+    Default: ""
 
   AWS_SECRET_ACCESS_KEY:
     Type: String
     Description: "AWS CONFIG"
-     Default: ""
+    Default: ""
 
   AWS_REGION:
     Type: String
     Description: "AWS CONFIG"
-     Default: ""
+    Default: ""
      
   AWS_PUBLISH_DATA_TOPIC_ARN:
     Type: String
     Description: "SNS TO SEND MESSAGE"
-     Default: ""
+    Default: ""
 
 
 Globals:
