@@ -10,11 +10,8 @@ git clone https://github.com/marcosparreiras/lambda-scrapper-puc.git
 
 2. Rename the `./scrapper/.env.sample` file to `./scrapper/.env` and fill in the required information.
 
-3. Rename the `template.yaml.sample` file to `template.yaml` and fill in the `parameters defaults`.
+3. Rename the `template.yaml.sample` file to `template.yaml` and fill in the `NFScrapperFunction Environment Variables`.
 
-- AWS_ACCESS_KEY_ID
-- AWS_SECRET_ACCESS_KEY
-- AWS_REGION
 - AWS_PUBLISH_DATA_TOPIC_ARN
 
 4. CD into `scrapper` folder and install the dependencies:

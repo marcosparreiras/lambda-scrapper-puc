@@ -5,27 +5,6 @@ Description: >
 
   Lambda function to do web scrapper on NFE
 
-Parameters:
-  AWS_ACCESS_KEY_ID:
-    Type: String
-    Description: "AWS CONFIG"
-    Default: ""
-
-  AWS_SECRET_ACCESS_KEY:
-    Type: String
-    Description: "AWS CONFIG"
-    Default: ""
-
-  AWS_REGION:
-    Type: String
-    Description: "AWS CONFIG"
-    Default: ""
-     
-  AWS_PUBLISH_DATA_TOPIC_ARN:
-    Type: String
-    Description: "SNS TO SEND MESSAGE"
-    Default: ""
-
 
 Globals:
   Function:
@@ -80,15 +59,24 @@ Resources:
         - x86_64
       Environment:
         Variables:
-          AWS_ACCESS_KEY_ID: !Ref AWS_ACCESS_KEY_ID
-          AWS_SECRET_ACCESS_KEY: !Ref AWS_SECRET_ACCESS_KEY
-          AWS_REGION: !Ref AWS_REGION
-          AWS_PUBLISH_DATA_TOPIC_ARN: !Ref AWS_PUBLISH_DATA_TOPIC_ARN
+          AWS_PUBLISH_DATA_TOPIC_ARN: ""
       Events:
         SqsEvento:
           Type: SQS
           Properties:
             Queue: !GetAtt NFScrapperSQS.Arn
+      Policies:
+        - Statement:
+            - Effect: "Allow"
+              Action:
+                - "sns:Publish"
+              Resource: "*"
+            - Effect: "Allow"
+              Action:
+                - "sqs:ReceiveMessage"
+                - "sqs:DeleteMessage"
+                - "sqs:GetQueueAttributes"
+              Resource: "*"
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -101,4 +89,4 @@ Resources:
 Outputs:
   NFPublishedSNS:
     Description: "NFPublishedSNS Function ARN"
-    Value: !GetAtt NFPublishedSNS.Arn
+    Value: !Ref NFPublishedSNS
