@@ -17,6 +17,7 @@ Resources:
     Properties:
       FifoTopic: true
       TopicName: "NFPublishedSNS.fifo"
+      ContentBasedDeduplication: true
 
   NFScrapperSQS:
     Type: AWS::SQS::Queue
